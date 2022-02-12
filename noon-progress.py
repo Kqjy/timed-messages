@@ -22,13 +22,19 @@ startofyearposix = datetime(now.year, 1, 1).timestamp()
 nextyearposix = datetime(now.year+1, 1, 1).timestamp()
 percentage = (noonposix - startofyearposix) / (nextyearposix - startofyearposix)
 
+# calculate the number of days left to next year
+datenow = datetime(now.year, now.month, now.day).timestamp()
+daysleft = (nextyearposix - datenow) / 86400
+yearnext = now.year + 1
+
 # webhook to post to Discord
 # https://discord.com/developers/docs/reference#message-formatting
 payload_start = {
-    'content': f'It is now <t:{noonposix}:f>. {now.year} is {percentage*100}% complete.',
+    'content': f'It is now <t:{noonposix}:f>. {now.year} is {percentage*100}% complete. There are {daysleft:.0f} days left to {yearnext}.',
 }
 
 # wait until it is time to post
 time.sleep(noonposix - nowposix)
 
 r = requests.post(config.webhook_url, data=payload_start)
+
